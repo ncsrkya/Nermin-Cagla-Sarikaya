@@ -1,0 +1,50 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.metrics import mean_squared_error
+
+# define mathematical function
+def y(x):
+    return (np.sin(2*np.pi*x) + np.sin(5*np.pi*x))
+
+# create initial dataset
+x_vals = np.arange(-1,1,0.002)
+y_vals = y(x_vals)
+
+# normalize dataset
+y_max = y_vals.max()
+y_vals /= y_max
+
+# split dataset into training and testing data (also shuffles)
+x_train, x_test, y_train, y_test = train_test_split(x_vals, y_vals, test_size=0.10)
+
+# plot initial training and testing data
+plt.figure()
+plt.plot(x_train, y_train, 'o')
+plt.plot(x_test, y_test, 'x')
+#plt.show()
+
+x_train = x_train.reshape(-1,1)
+x_test = x_test.reshape(-1,1)
+
+# set up neural network
+mlp = MLPRegressor(
+    hidden_layer_sizes=[30],
+    max_iter=1000,
+)
+
+# train network
+mlp.fit(x_train,y_train)
+
+# test network
+predictions = mlp.predict(x_test)
+
+# visualize predictions
+plt.plot(x_test, predictions, 'ro')
+plt.show()
+
+# measure predictions
+mse = mean_squared_error(y_test, predictions)
+print("MSE:", mse)
